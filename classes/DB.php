@@ -151,4 +151,11 @@ class DB{
     {
         return $this->_results;
     }
+
+    /**
+     * @return mixed
+     */
+    public function first(){
+        return $this->results()[0];
+    }
 }

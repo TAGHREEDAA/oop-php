@@ -6,6 +6,18 @@ if (Session::exists('success')){
     echo Session::flash('success');
 }
 
+$user=new User(); // get logged in user
+if ($user->isLoggedIn()){
+    echo "Hello ,<a href='profile.php?".$user->data()->username."'>{$user->data()->username}</a>";
+?>
+    <ul>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+<?php
+
+}
+
+
 //var_dump(Config::get('mysql.host'));
 
 

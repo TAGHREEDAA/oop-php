@@ -37,8 +37,29 @@ if(Input::exists()) {
 
         if ($validation->passed()) {
             // do register user
-            Session::flash('success','You registered successfully :) ');
-            header('Location:index.php');
+
+            try{
+
+                $user = new User();
+                $salt = Hash::salt(32);
+
+                $user->create([
+                    'username'  => Input::get('username'),
+                    'email'     => Input::get('email'),
+                    'name'      => Input::get('name'),
+                    'password'  => Hash::make(Input::get('password'), $salt),
+                    'salt'      => $salt,
+                    'joined_at' => date('Y-m-d H:i:s'),
+                    'group_id'  => 1
+                ]);
+
+                Session::flash('success','You registered successfully :) ');
+                Redirect::to('index.php');
+            }catch (Exception $exception){
+                Redirect::to(404);
+            }
+
+
         } else {
             var_dump($validation->errors());
         }

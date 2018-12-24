@@ -13,7 +13,7 @@ class Token{
 
         if (Session::exists($tokenName) && $token === Session::get($tokenName)){
             Session::delete($tokenName);
-            var_dump(true);
+
             return true;
         }
 
