@@ -1,6 +1,7 @@
 <?php
 
 require_once 'core/init.php';
+
 if(Input::exists()) {
     if(Token::check(Input::get('csrf-token'))) {
 
@@ -36,6 +37,8 @@ if(Input::exists()) {
 
         if ($validation->passed()) {
             // do register user
+            Session::flash('success','You registered successfully :) ');
+            header('Location:index.php');
         } else {
             var_dump($validation->errors());
         }

@@ -18,4 +18,15 @@ class Session{
             unset($_SESSION[$key]);
         }
     }
+
+    public static function flash($message, $content = ''){
+        if (self::exists($message)){
+            $value = self::get($message);
+            self::delete($message);
+            return $value;
+        }
+        else{
+            self::put($message,$content);
+        }
+    }
 }
