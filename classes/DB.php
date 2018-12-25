@@ -106,6 +106,7 @@ class DB{
 
             $sql = "INSERT INTO $table ($columns) VALUES ($str)";
 
+
             if (!$this->query($sql, array_values($params))->error())
             {
                 return true;

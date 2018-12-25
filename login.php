@@ -19,7 +19,9 @@ if (Input::exists()){
         if ($validation->passed()) {
             try{
                 $user = new User();
-                $loginStatus = $user->login(Input::get('username'), Input::get('password'));
+                $remember = (Input::get('remember') === "on")? true: false;
+
+                $loginStatus = $user->login(Input::get('username'), Input::get('password'), $remember);
 
                 if ($loginStatus){
                     echo 'Logged in';
@@ -72,6 +74,10 @@ if (Input::exists()){
               <div class="form-group">
                   <label for="password">Password</label>
                   <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+              </div>
+              <div class="form-group form-check">
+                  <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                  <label class="form-check-label" for="remember">Remember me</label>
               </div>
               <input type="hidden" name="csrf-token" value="<?php echo Token::generate();?>">
               <button type="submit" class="btn btn-primary">Login</button>

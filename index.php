@@ -16,6 +16,9 @@ if ($user->isLoggedIn()){
 <?php
 
 }
+else{
+    echo "<a href='login.php'>Login</a> or <a href='register.php'>Register</a>";
+}
 
 
 //var_dump(Config::get('mysql.host'));

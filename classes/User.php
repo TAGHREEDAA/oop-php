@@ -2,6 +2,7 @@
 class User{
     private $_db,
             $_sessionName,
+            $_cookieName,
             $_isLoggedIn,
             $_data;
 
@@ -10,6 +11,7 @@ class User{
         $this->_db = DB::getInstance();
 
         $this->_sessionName = Config::get("session.session_name");
+        $this->_cookieName = Config::get("remember.cookie_name");
 
         if(!$user){
             if(Session::exists($this->_sessionName)){
@@ -20,6 +22,13 @@ class User{
                 }else{
                     // proccess logout
                 }
+            }
+        }
+        else{
+            if($this->find($user)){
+                $this->_isLoggedIn = true;
+            }else{
+                // proccess logout
             }
         }
     }
@@ -43,20 +52,50 @@ class User{
         else
             return false;
     }
-    public function login($username=null, $password=null){
-        // 1- find user where username = $username
-        if ($this->find($username)){
-            $user = $this->data();
+    public function login($username=null, $password=null, $remember=false){
 
-            // 2- hash password with salt
-            // 3- compare
-            if (Hash::make($password,$user->salt) === $user->password){
-                Session::put($this->_sessionName,$user->id);
-                return true;
+        if (!$username && !$password && $this->exists()){
+            // login user automatically
+
+            Session::put($this->_sessionName, $this->data()->id);
+        }
+        else
+        {
+            // 1- find user where username = $username
+            if ($this->find($username)){
+                $user = $this->data();
+
+                // 2- hash password with salt
+                // 3- compare password with the saved in db
+                if (Hash::make($password,$user->salt) === $user->password){
+                    Session::put($this->_sessionName,$user->id);
+
+                    if ($remember){
+
+                        // 1- check if exists in users_session table
+                        $userSession =$this->_db->get('users_session',['user_id','=',$user->id]);
+
+                        if (!$userSession->count()) {
+                            $hash=Hash::unique();
+
+                            // 2- if new insert into db
+                            $this->_db->insert('users_session',[
+                                'user_id'=> $user->id,
+                                'hash'=> $hash,
+                            ]);
+                        }
+                        else{
+                            $hash = $userSession->first()->hash;
+                        }
+
+                        Cookie::set($this->_cookieName, $hash, Config::get('remember.cookie_expiry'));
+                    }
+                    return true;
+                }
+                else
+                    return false;
+
             }
-            else
-                return false;
-
         }
     }
 
@@ -68,4 +107,18 @@ class User{
         return $this->_isLoggedIn;
     }
 
+    public function logout(){
+
+        // delete user_sessions
+        $this->_db->delete('users_session',['user_id','=',$this->data()->id]);
+
+        Session::delete($this->_sessionName);
+        Cookie::delete($this->_cookieName);
+
+    }
+
+    private function exists(){
+        var_dump($this->data());
+        return (!empty($this->data()))? true: false;
+    }
 }
