@@ -13,7 +13,6 @@ class Validation{
 
     public function check($data, array $items){
 
-
         foreach ($items as $item=>$rules){
             foreach ($rules as $rule=>$ruleValue){
 
@@ -36,12 +35,16 @@ class Validation{
                 if ($rule === 'unique'&& !$this->checkUnique($ruleValue, $item, $data[$item])){
                     $this->addError("$item $data[$item] is taken! ");
                 }
+                if ($rule === 'unique-ignore'&& !$this->checkUniqueIgnoreValue($ruleValue[0],$ruleValue[1],$ruleValue[2], $item, $data[$item])){
+                    $this->addError("$item $data[$item] is taken! ");
+                }
 
             }
 
-            if (empty($this->_errors)){
-                $this->_passed =true;
-            }
+        }
+
+        if (empty($this->_errors)){
+            $this->_passed =true;
         }
     }
 
@@ -67,6 +70,13 @@ class Validation{
 
     private function checkUnique($table, $column, $value){
         $this->_db->get($table,[$column,'=',$value]);
+        return ($this->_db->count() > 0)? false : true;
+    }
+
+    public function checkUniqueIgnoreValue($table,$ignoredCol, $ignoredValue, $column, $value){
+
+        $this->_db->query("SELECT * FROM {$table} WHERE {$ignoredCol} <> ? AND {$column}= ?",[$ignoredValue, $value]);
+
         return ($this->_db->count() > 0)? false : true;
     }
 }

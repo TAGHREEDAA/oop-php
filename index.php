@@ -11,6 +11,7 @@ if ($user->isLoggedIn()){
     echo "Hello ,<a href='profile.php?".$user->data()->username."'>{$user->data()->username}</a>";
 ?>
     <ul>
+        <li><a href="update-profile.php">Update Profile</a></li>
         <li><a href="logout.php">Logout</a></li>
     </ul>
 <?php

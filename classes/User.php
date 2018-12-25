@@ -39,6 +39,14 @@ class User{
         }
     }
 
+    public function update(Array $data, $id =null){
+        $id = (!$id && $this->isLoggedIn())?$this->data()->id: $id;
+        if(!$this->_db->update('users',$id,$data)){
+            throw  new Exception('A Problem Occured while register new account');
+        }
+    }
+
+
     public function find($user = null){
         if ($user){
             $field = (is_numeric($user))? 'id': 'username';
@@ -118,7 +126,7 @@ class User{
     }
 
     private function exists(){
-        var_dump($this->data());
+
         return (!empty($this->data()))? true: false;
     }
 }

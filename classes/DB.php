@@ -49,10 +49,12 @@ class DB{
                 $this->_query->bindValue($i+1, $param);
             }
             if ($this->_query->execute()){
+
                 $this->_count = $this->_query->rowCount();
-                if ($this->_count){
+//                if ($this->_count){
                     $this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ);
-                }
+                    $this->_count = $this->_query->rowCount();
+//                }
             }
             else{
                 $this->_errors = true;
