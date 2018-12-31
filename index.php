@@ -8,10 +8,11 @@ if (Session::exists('success')){
 
 $user=new User(); // get logged in user
 if ($user->isLoggedIn()){
-    echo "Hello ,<a href='profile.php?".$user->data()->username."'>{$user->data()->username}</a>";
+    echo "Hello ,<a href='profile.php?username=".$user->data()->username."'>{$user->data()->username}</a>";
 ?>
     <ul>
         <li><a href="update-profile.php">Update Profile</a></li>
+        <li><a href="change-password.php">Change Password</a></li>
         <li><a href="logout.php">Logout</a></li>
     </ul>
 <?php
@@ -19,6 +20,11 @@ if ($user->isLoggedIn()){
 }
 else{
     echo "<a href='login.php'>Login</a> or <a href='register.php'>Register</a>";
+}
+
+
+if ($user->hasPermission('admin')){
+    echo '<h2>You are administrator</h2>';
 }
 
 
